@@ -38,6 +38,7 @@ const onSubmit = async () => {
     return
   }
   state.url = null
+  state.type = 'text'
   loading.value = true
   try {
     await createMessage(state)
@@ -76,7 +77,7 @@ const handleUpload = async () => {
   loading.value = true
   try {
     const convertedImage = await convertImage(selectedFile.value!)
-    const { data, error } = await uploadFile(selectedFile.value!.name, convertedImage)
+    const { data, error } = await uploadFile(convertedImage)
     if (!data.value || error.value) throw error.value
 
     const { data: url, error: errorUrl } = await getPublicUrl(data.value.path)
@@ -89,6 +90,7 @@ const handleUpload = async () => {
     await createMessage(state)
 
     state.url = null
+    selectedFile.value = undefined
     isDrawerOpen.value = false
   } catch (error) {
     console.error(error)

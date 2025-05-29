@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 useHead({
-  title: 'ClipCloud'
+  title: 'CloudClip'
 })
 </script>
 
