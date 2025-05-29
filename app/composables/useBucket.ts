@@ -1,11 +1,11 @@
 export const useBucket = () => {
   const supabase = useSupabaseClient()
 
-  const uploadFile = (file: File) => {
+  const uploadFile = (filename: string, blob: Blob) => {
     return useAsyncData('upload-file', async() => {
-      const path = createPath(file.name)
-      const { data } = await supabase.storage.from('clip-attachments').upload(path, file, {
-        contentType: file.type
+      const path = createPath(filename)
+      const { data } = await supabase.storage.from('clip-attachments').upload(path, blob, {
+        contentType: blob.type
       })
       return data
     })

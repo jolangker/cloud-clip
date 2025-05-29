@@ -74,7 +74,8 @@ const handleCloseDrawer = () => {
 const handleUpload = async () => {
   loading.value = true
   try {
-    const { data, error } = await uploadFile(selectedFile.value!)
+    const convertedImage = await convertImage(selectedFile.value!)
+    const { data, error } = await uploadFile(selectedFile.value!.name, convertedImage)
     if (!data.value || error.value) throw error.value
 
     const { data: url, error: errorUrl } = await getPublicUrl(data.value.path)
@@ -116,10 +117,10 @@ onUnmounted(channel.unsubscribe)
         </u-form>
       </div>
     </div>
-    <u-input ref="inputFile" v-model="filePath" type="file" class="absolute hidden" @change="handleFileChange" />
+    <u-input ref="inputFile" v-model="filePath" type="file" accept="image/*" class="absolute hidden" @change="handleFileChange" />
     <u-drawer v-model:open="isDrawerOpen" @close="handleCloseDrawer">
       <template #content>
-        <div class="max-w-4xl mx-auto p-4 flex flex-col gap-y-2">
+        <div class="max-w-4xl mx-auto p-4 flex flex-col gap-y-2 overflow-auto">
           <nuxt-img v-if="selectedFileUrl" :src="selectedFileUrl" />
           <u-button label="Upload" icon="i-tabler:send-2" size="xl" block :loading @click="handleUpload" />
         </div>
