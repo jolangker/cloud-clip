@@ -50,7 +50,12 @@ const { copy, copied } = useClipboardItems({ source })
     <div class="text-lg">
       <div v-if="message.content">{{ message.content }}</div>
       <div v-else-if="file">
-        <nuxt-img v-if="file.type.startsWith('image/')" :src="file.url" class="rounded-lg" />
+        <nuxt-img v-if="file.type.startsWith('image/')" :src="file.url" custom class="rounded-lg">
+          <template #default="{ isLoaded, imgAttrs, src}">
+            <img v-if="isLoaded" :src="src" v-bind="imgAttrs">
+            <img v-else src="https://placehold.co/400x400" alt="placeholder">
+          </template>
+          </nuxt-img>
         <span v-else>{{ message.url }}</span>
       </div>
     </div>

@@ -37,6 +37,7 @@ const onSubmit = async () => {
     showToast('Input cannot be empty', 'error')
     return
   }
+  state.url = null
   loading.value = true
   try {
     await createMessage(state)
@@ -83,6 +84,8 @@ const handleUpload = async () => {
 
     state.url = url.value
     state.type = 'file'
+    state.content = null
+
     await createMessage(state)
 
     state.url = null
@@ -91,6 +94,24 @@ const handleUpload = async () => {
     console.error(error)
   } finally {
     loading.value = false
+  }
+}
+
+const handlePaste = (e: ClipboardEvent) => {
+  const items = e.clipboardData?.items
+  if (!items) return
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i]
+    if (item) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile()
+        if (file) {
+          selectedFile.value = file
+          isDrawerOpen.value = true
+        }
+      }
+    }
   }
 }
 
@@ -110,14 +131,27 @@ onUnmounted(channel.unsubscribe)
           <div class="flex items-center gap-2">
             <u-button icon="i-tabler:plus" variant="outline" color="neutral" size="xl" :loading @click="inputFile.inputRef.click()" />
             <u-form-field class="flex-1">
-              <u-input v-model="state.content" class="w-full" size="xl" placeholder="Type your message..." />
+              <u-input 
+                v-model="state.content" 
+                class="w-full" 
+                size="xl"
+                placeholder="Type your message..." 
+                @paste="handlePaste"
+              />
             </u-form-field>
             <u-button icon="i-tabler:send-2" type="submit" size="xl" :loading />
           </div>
         </u-form>
       </div>
     </div>
-    <u-input ref="inputFile" v-model="filePath" type="file" accept="image/*" class="absolute hidden" @change="handleFileChange" />
+    <u-input 
+      ref="inputFile" 
+      v-model="filePath" 
+      type="file" 
+      accept="image/*" 
+      class="absolute hidden"
+      @change="handleFileChange" 
+    />
     <u-drawer v-model:open="isDrawerOpen" @close="handleCloseDrawer">
       <template #content>
         <div class="max-w-4xl mx-auto p-4 flex flex-col gap-y-2 overflow-auto">

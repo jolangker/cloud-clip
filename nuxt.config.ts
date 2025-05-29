@@ -24,5 +24,10 @@ export default defineNuxtConfig({
     server: {
       allowedHosts: true
     }
+  },
+
+  image: {
+    format: ['webp'],
+    quality: 0.8
   }
 })

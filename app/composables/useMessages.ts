@@ -10,7 +10,7 @@ export const useMessages = () => {
     })
   }
 
-  const createMessage = (payload: Message) => {
+  const createMessage = (payload: Partial<Message>) => {
     return useAsyncData('create-message', async () => {
       const { data } = await supabase.from('messages').insert(payload).select().single()
       return data
