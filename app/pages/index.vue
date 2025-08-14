@@ -127,7 +127,7 @@ onUnmounted(channel.unsubscribe)
        <clip-unit :message />
       </template>
     </div>
-    <div class="bg-neutral-800 pt-6 px-4 pb-8 rounded-t-lg fixed w-full bottom-0">
+    <div class="bg-neutral-200 dark:bg-neutral-800 pt-6 px-4 pb-8 rounded-t-lg fixed w-full bottom-0">
       <div>
         <u-form :state :disabled="loading" @submit="onSubmit">
           <div class="flex items-center gap-2">

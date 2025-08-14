@@ -38,7 +38,7 @@ const { copy, copied } = useClipboardItems({ source })
 </script>
 
 <template>
-  <div class="p-4 rounded-xl bg-neutral-800 flex flex-col gap-y-2">
+  <div class="p-4 rounded-xl bg-neutral-200 dark:bg-neutral-800 flex flex-col gap-y-2">
     <div class="flex items-center justify-between">
       <u-button 
         :icon="copied ? 'i-tabler:copy-check' : 'i-tabler:copy'" 
@@ -48,7 +48,7 @@ const { copy, copied } = useClipboardItems({ source })
       <span class="text-xs">{{ dayjs(message.created_at).format('dddd, D MMMM YYYY HH:mm:ss') }}</span>
     </div>
     <div class="text-lg">
-      <div v-if="message.content">{{ message.content }}</div>
+      <div v-if="message.content" class="break-all">{{ message.content }}</div>
       <div v-else-if="file">
         <nuxt-img v-if="file.type.startsWith('image/')" :src="file.url" custom class="rounded-lg">
           <template #default="{ isLoaded, imgAttrs, src}">
