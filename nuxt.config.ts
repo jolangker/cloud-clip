@@ -29,5 +29,9 @@ export default defineNuxtConfig({
   image: {
     format: ['webp'],
     quality: 0.8
+  },
+
+  supabase: {
+    redirect: false
   }
 })

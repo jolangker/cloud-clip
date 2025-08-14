@@ -1,11 +1,19 @@
 <script setup lang='ts'>
-import type { Database, Message } from '~~/types/database.types'
+import type { Database } from '~~/types/database.types'
 const supabase = useSupabaseClient<Database>()
+const user = useSupabaseUser()
+
+if (!user.value) {
+  await supabase.auth.signInAnonymously()
+}
+
+const route = useRoute()
+const slug = ref(route.params.slug as string)
 
 const { getMessages, createMessage } = useMessages()
 const { uploadFile, getPublicUrl } = useBucket()
 
-const { data: messages } = await getMessages()
+const { data: messages } = await getMessages(slug.value)
 
 const channel = supabase
   .channel('table_db_changes')
@@ -24,10 +32,11 @@ const channel = supabase
     }
   ).subscribe()
 
-const state = reactive<Partial<Message>>({
+const state = reactive<Partial<Database['public']['Tables']['messages']['Row']>>({
   content: null,
   url: null,
-  type: 'text'
+  type: 'text',
+  slug: slug.value
 })
 
 const loading = ref(false)
@@ -39,6 +48,7 @@ const onSubmit = async () => {
   }
   state.url = null
   state.type = 'text'
+  state.slug = slug.value
   loading.value = true
   try {
     await createMessage(state)
@@ -117,12 +127,20 @@ const handlePaste = (e: ClipboardEvent) => {
   }
 }
 
+const handleChangeRoom = () => {
+  navigateTo(`/${slug.value}`, { external: true })
+}
+
 onUnmounted(channel.unsubscribe)
 </script>
 
 <template>
   <div class="flex flex-col min-h-[100dvh] relative pb-32">
     <div class="flex-1 max-w-4xl mx-auto w-full p-4 flex flex-col gap-y-4">
+      <div class="bg-neutral-200 dark:bg-neutral-800 mb-4 flex items-center gap-2 p-6 rounded-lg">
+        <u-input v-model="slug" size="xl" class="flex-1" />
+        <u-button icon="i-tabler:refresh" type="submit" size="xl" label="Change Room" @click="handleChangeRoom" />
+      </div>
       <template v-for="message in messages ?? []" :key="message.id">
        <clip-unit :message />
       </template>
